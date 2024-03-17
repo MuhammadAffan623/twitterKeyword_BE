@@ -1,32 +1,43 @@
 const express = require("express");
 const cors = require("cors");
-const session = require('express-session');
-const userRoutes = require("./routes/userRoutes");
+const session = require("express-session");
 const app = express();
+const { PORT } = require("./config");
+const generateToken = require("./utils/tokenHelper");
 app.use(cors());
 require("./db");
 const passport = require("passport");
-const jwt = require("jsonwebtoken");
+const User = require("./models/userModel");
 const TwitterStrategy = require("passport-twitter").Strategy;
-// const runCronJob = require("./cronJob");
-// Configure Twitter Strategy
+const {
+  TWITTER_API_KEY,
+  TWITTER_API_SECRET_KEY,
+  CALLBACK_URL,
+} = require("./config");
+const userRoutes = require("./routes/userRoutes");
+
+app.use(express.json()); // for parsing application/json
+app.use(express.urlencoded({ extended: true }));
+
+// Define a route for the root URL
+app.get("/", (req, res) => {
+  res.send("Server is runing!");
+});
+
+app.use("/api/user/admin", userRoutes);
 passport.use(
   new TwitterStrategy(
     {
-      consumerKey: "bsLH3788r1gugSqjStdJ08D9h",
-      consumerSecret: "3Y89TH9TUt89RVmWrfEBZ4wcCSREILsN4FAIcPxHLANtQdpD5b",
-      callbackURL: "http://localhost:4000/api/user/twitter/callback",
+      consumerKey: TWITTER_API_KEY,
+      consumerSecret: TWITTER_API_SECRET_KEY,
+      callbackURL: CALLBACK_URL,
     },
     function (token, tokenSecret, profile, done) {
-      // You can handle user creation/login here
-      // For simplicity, let's assume we have a user object from database
-      console.log(';profile',profile)
       const user = {
         id: profile.id,
         username: profile.username,
         displayName: profile.displayName,
       };
-      console.log('user' , user)
       return done(null, user);
     }
   )
@@ -46,22 +57,28 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-const { PORT } = require("./config");
 
-// Define a route for the root URL
-app.get("/", (req, res) => {
-  res.send("Server is runing!");
-});
-
-// app.use("/api/user", userRoutes);
 app.get("/api/user/twitter/login", passport.authenticate("twitter"));
 
 app.get(
   "/api/user/twitter/callback",
   passport.authenticate("twitter", { failureRedirect: "/login" }),
-  function (req, res) {
-    // Successful authentication, redirect home.
-    res.redirect("/");
+  async function (req, res) {
+    console.log("req.user", req.user);
+    console.log("req.user", req?.session);
+    const existUser = await User.find({ twitterId: req.user.id });
+    console.log("existUser", existUser);
+    if (!existUser?.length) {
+      const newUser = await User.create({
+        twitterId: req.user.id,
+        username: req.user.username,
+      });
+    //   await newUser.save();
+      const token = generateToken(newUser._id);
+      return res.redirect(`http://localhost:5173/${token}`);
+    }
+    const token = generateToken(existUser._id);
+    return res.redirect(`http://localhost:5173/${token}`);
   }
 );
 

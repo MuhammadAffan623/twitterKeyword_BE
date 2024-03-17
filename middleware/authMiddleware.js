@@ -1,5 +1,5 @@
-import jwt from "jsonwebtoken";
-import User from "../models/userModel";
+const jwt = require("jsonwebtoken");
+const User = require("../models/userModel");
 
 const isAuthenticated = async (req, res, next) => {
   let token;
@@ -25,4 +25,4 @@ const isAuthenticated = async (req, res, next) => {
   }
 };
 
-export { isAuthenticated };
+module.exports = { isAuthenticated };

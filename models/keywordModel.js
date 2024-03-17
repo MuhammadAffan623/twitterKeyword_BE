@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const keywordSchema = new mongoose.Schema({
     userId: {
@@ -17,7 +17,7 @@ const keywordSchema = new mongoose.Schema({
     fetchDateTime: {
         type: Date,
         required: true,
-        default: Date.now, 
+        default: new Date('1995-01-01'), 
     }
 }, {
     timestamps: true
@@ -25,4 +25,4 @@ const keywordSchema = new mongoose.Schema({
 
 const KeywordModel = mongoose.model('Keyword', keywordSchema);
 
-export default KeywordModel;
+module.exports =  KeywordModel;

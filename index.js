@@ -15,7 +15,7 @@ const {
   CALLBACK_URL,
 } = require("./config");
 const userRoutes = require("./routes/userRoutes");
-
+const keywordRoute = require("./routes/keywordRoutes");
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true }));
 
@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.send("Server is runing!");
 });
-
+app.use("/api/keyword", keywordRoute)
 app.use("/api/user/admin", userRoutes);
 passport.use(
   new TwitterStrategy(
@@ -75,10 +75,10 @@ app.get(
       });
     //   await newUser.save();
       const token = generateToken(newUser._id);
-      return res.redirect(`http://localhost:5173/${token}`);
+      return res.redirect(`http://localhost:5173/?token=${token}`);
     }
     const token = generateToken(existUser._id);
-    return res.redirect(`http://localhost:5173/${token}`);
+    return res.redirect(`http://localhost:5173/?token=${token}`);
   }
 );
 

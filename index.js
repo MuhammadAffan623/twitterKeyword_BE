@@ -68,8 +68,7 @@ app.get(
     console.log("req.user", req.user);
     console.log("req.user", req?.session);
     const existUser = await User.findOne({ twitterId: req.user.id });
-
-    if (!existUser?.length) {
+    if (!existUser) {
       const newUser = await User.create({
         twitterId: req.user.id,
         username: req.user.username,

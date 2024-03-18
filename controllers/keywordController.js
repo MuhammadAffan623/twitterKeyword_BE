@@ -2,15 +2,14 @@ const KeywordModel = require("../models/keywordModel");
 
 const addNewKeyword = async (req, res) => {
   console.log("req.user :", req.user);
-  if (req.user.role !== "ADMIN") {
+  if (req?.user?.role !== "ADMIN") {
     res.status(401);
-    throw new Error("Only admin can create course");
+    throw new Error("Only admin can create keyword");
   }
   try {
-    const { userId, keyword } = req.body;
+    const { keyword } = req.body;
     // Create a new keyword document
     const newKeyword = await KeywordModel.create({
-      userId,
       keyword,
     });
     return res.status(201).json(newKeyword);
@@ -20,18 +19,17 @@ const addNewKeyword = async (req, res) => {
   }
 };
 const updateKeyword = async (req, res) => {
-  if (req.user.role !== "ADMIN") {
+  if (req?.user?.role !== "ADMIN") {
     res.status(401);
-    throw new Error("Only admin can create course");
+    throw new Error("Only admin can");
   }
   try {
     const keywordId = req.params.keywordId;
-    const { userId, keyword, totalCount } = req.body;
+    const { keyword } = req.body;
     // Find and update the keyword document
     const updatedKeyword = await KeywordModel.findByIdAndUpdate(
       keywordId,
       {
-        userId,
         keyword,
       },
       { new: true }
@@ -44,9 +42,9 @@ const updateKeyword = async (req, res) => {
 };
 
 const deleteKeyword = async (req, res) => {
-  if (req.user.role !== "ADMIN") {
+  if (req?.user?.role !== "ADMIN") {
     res.status(401);
-    throw new Error("Only admin can create course");
+    throw new Error("Only admin can");
   }
   try {
     const keywordId = req.params.keywordId;
@@ -59,8 +57,19 @@ const deleteKeyword = async (req, res) => {
   }
 };
 
+const getKeyword = async (req, res) => {
+  try {
+    const keyword = await KeywordModel.findOne({});
+    res.status(200).json(keyword)
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   addNewKeyword,
   updateKeyword,
   deleteKeyword,
+  getKeyword
 };

@@ -18,12 +18,12 @@ const userRoutes = require("./routes/userRoutes");
 const keywordRoute = require("./routes/keywordRoutes");
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true }));
-
+// require("./cron/index");
 // Define a route for the root URL
 app.get("/", (req, res) => {
   res.send("Server is runing!");
 });
-app.use("/api/keyword", keywordRoute)
+app.use("/api/keyword", keywordRoute);
 app.use("/api/user/admin", userRoutes);
 passport.use(
   new TwitterStrategy(
@@ -37,6 +37,7 @@ passport.use(
         id: profile.id,
         username: profile.username,
         displayName: profile.displayName,
+        imageUrl: profile?.photos?.[0]?.value ?? "",
       };
       return done(null, user);
     }
@@ -72,8 +73,9 @@ app.get(
       const newUser = await User.create({
         twitterId: req.user.id,
         username: req.user.username,
+        imageUrl: req.user.imageUrl,
       });
-    //   await newUser.save();
+      //   await newUser.save();
       const token = generateToken(newUser._id);
       return res.redirect(`http://localhost:5173/?token=${token}`);
     }

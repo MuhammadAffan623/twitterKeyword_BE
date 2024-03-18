@@ -27,18 +27,21 @@ const userSchema = mongoose.Schema(
       type: String,
     },
     fetchDateTime: {
-        type: Date,
-        required: true,
-        default: new Date('1995-01-01'), 
+      type: Date,
+      required: true,
+      default: new Date("1995-01-01"),
     },
-    tweetsCount:{
-        type: Number,
-        default: 0,
+    tweetsCount: {
+      type: Number,
+      default: 0,
     },
-    replyCount:{
-        type: Number,
-        default: 0, 
-    }
+    replyCount: {
+      type: Number,
+      default: 0,
+    },
+    twitterAccountCreated: {
+      type: Date,
+    },
   },
   {
     timestamps: true,

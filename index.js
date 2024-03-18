@@ -38,6 +38,9 @@ passport.use(
         username: profile.username,
         displayName: profile.displayName,
         imageUrl: profile?.photos?.[0]?.value ?? "",
+        twitterAccountCreated: profile?._json?.created_at
+          ? new Date(profile?._json?.created_at).toISOString()
+          : "",
       };
       return done(null, user);
     }
@@ -73,6 +76,7 @@ app.get(
         twitterId: req.user.id,
         username: req.user.username,
         imageUrl: req.user.imageUrl,
+        twitterAccountCreated: req.user.twitterAccountCreated,
       });
       const token = generateToken(newUser._id);
       return res.redirect(`http://localhost:5173/?token=${token}`);

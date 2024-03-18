@@ -44,7 +44,7 @@ const registerAdmin = asyncHandler(async (req, res) => {
       token: generateToken(newAdmin._id),
     });
   } catch (err) {
-    console.log("error occured in adminLogin", err);
+    return res.status(500).json({ message: "error occured in adminLogin" });
   }
 });
 
@@ -55,8 +55,17 @@ const getUserByToken = async (req, res) => {
   return res.status(400).json({ message: "Invalid token" });
 };
 
+const getAllUSers = async (req, res) => {
+  try {
+    const user = await User.find({ role: "USER" });
+    return res.status(200).json({ user: user });
+  } catch (err) {
+    return res.status(500).json({ message: "error occured in getting all users" });
+  }
+};
 module.exports = {
   adminLogin,
   registerAdmin,
   getUserByToken,
+  getAllUSers
 };

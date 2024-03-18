@@ -17,7 +17,7 @@ const adminLogin = async (req, res) => {
         token: generateToken(user._id),
       });
     } else {
-      return res.status(401).json({message:"Invalid password"});
+      return res.status(401).json({ message: "Invalid password" });
     }
   } catch (err) {
     console.log("error occured in adminLogin", err);
@@ -25,7 +25,7 @@ const adminLogin = async (req, res) => {
 };
 
 const registerAdmin = asyncHandler(async (req, res) => {
-  console.log("register",req);
+  console.log("register", req);
   const { email, password, username } = req.body;
   try {
     const existEmail = await User.find({ email });
@@ -37,7 +37,7 @@ const registerAdmin = asyncHandler(async (req, res) => {
       password,
       username,
       role: "ADMIN",
-      twitterId:'null'
+      twitterId: "null",
     });
     return res.json({
       user: newAdmin,
@@ -48,7 +48,15 @@ const registerAdmin = asyncHandler(async (req, res) => {
   }
 });
 
+const getUserByToken = async (req, res) => {
+  if (req?.user?._id) {
+    return res.json({ user: req.user });
+  }
+  return res.status(400).json({ message: "Invalid token" });
+};
+
 module.exports = {
   adminLogin,
   registerAdmin,
+  getUserByToken,
 };

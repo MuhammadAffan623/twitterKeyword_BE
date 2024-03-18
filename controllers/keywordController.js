@@ -59,8 +59,8 @@ const deleteKeyword = async (req, res) => {
 
 const getKeyword = async (req, res) => {
   try {
-    const keyword = await KeywordModel.findOne({});
-    res.status(200).json(keyword)
+    const keyword = await KeywordModel.findOne({}).sort({ createdAt: -1 });
+    res.status(200).json(keyword);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -71,5 +71,5 @@ module.exports = {
   addNewKeyword,
   updateKeyword,
   deleteKeyword,
-  getKeyword
+  getKeyword,
 };

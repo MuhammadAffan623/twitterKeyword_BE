@@ -18,7 +18,7 @@ const userRoutes = require("./routes/userRoutes");
 const keywordRoute = require("./routes/keywordRoutes");
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true }));
-// require("./cron/index");
+require("./cron/index");
 // Define a route for the root URL
 app.get("/", (req, res) => {
   res.send("Server is runing!");

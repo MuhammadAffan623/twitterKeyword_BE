@@ -5,10 +5,7 @@ const { TWITTER_TOKEN } = require("../config/index");
 const client = new Client(TWITTER_TOKEN);
 
 async function getUserIdByUsername(username) {
-  console.log("username : ", username);
   const response = await client.users.findUserByUsername(username);
-  console.log("response : ", response);
-  //   console.log('response : ', response)
 
   return response.data.id;
 }
@@ -34,39 +31,33 @@ async function countKeywords(arrayOfTweet, keyword) {
   return count;
 }
 async function fetchTweetsAndRepliesByUsername(username, word, lastFetchTime) {
-  console.log("getUserIdByUsername");
   const userId = await getUserIdByUsername(username?.username);
 
   // Assuming lastFetchTime is in ISO 8601 format. Adjust accordingly.
   const startTime = moment(lastFetchTime).toISOString();
 
-  // Fetch user's tweets from lastFetchTime onwards
-  const tweetsResponse = await client.tweets.usersIdTweets(username.twitterId, {
+  const tweetsResponse = await client.tweets.usersIdTweets(userId, {
+    "tweet.fields": "in_reply_to_user_id",
     max_results: 100,
     start_time: startTime,
   });
-  let tweetCount = 0;
-  console.log("tweetsResponse :", tweetsResponse);
-  if (tweetsResponse?.data?.length) {
-    tweetCount = await countKeywords(tweetsResponse.data, word);
-  }
-  const searchQuery = `(from:${username} @${username} "${word}")`;
 
-  const mentionsResponse = await client.tweets.tweetsRecentSearch({
-    query: searchQuery,
-    max_results: 100,
-    start_time: startTime,
-  });
+  const replies = tweetsResponse?.data;
   let mentionCount = 0;
-
-  if (mentionsResponse?.data?.length) {
-    mentionCount = await countKeywords(mentionsResponse.data, word);
+  let tweetCount = 0;
+  const withReply = [];
+  const withoutReply = [];
+  if (replies?.length) {
+    replies.forEach((obj) => {
+      if ("in_reply_to_user_id" in obj) {
+        withReply.push(obj);
+      } else {
+        withoutReply.push(obj);
+      }
+    });
   }
-  console.log({ mentionsResponse });
-  console.log({
-    tweetCount,
-    mentionCount,
-  });
+  mentionCount = await countKeywords(withReply, word);
+  tweetCount = await countKeywords(withoutReply, word);
 
   return {
     tweetCount,

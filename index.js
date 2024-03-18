@@ -67,15 +67,14 @@ app.get(
   async function (req, res) {
     console.log("req.user", req.user);
     console.log("req.user", req?.session);
-    const existUser = await User.find({ twitterId: req.user.id });
-    console.log("existUser", existUser);
+    const existUser = await User.findOne({ twitterId: req.user.id });
+
     if (!existUser?.length) {
       const newUser = await User.create({
         twitterId: req.user.id,
         username: req.user.username,
         imageUrl: req.user.imageUrl,
       });
-      //   await newUser.save();
       const token = generateToken(newUser._id);
       return res.redirect(`http://localhost:5173/?token=${token}`);
     }

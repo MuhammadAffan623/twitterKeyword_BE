@@ -31,17 +31,72 @@ const userSchema = mongoose.Schema(
       required: true,
       default: new Date("1995-01-01"),
     },
-    tweetsCount: {
+    // powered of post one
+    poweredTweetCount: {
       type: Number,
       default: 0,
     },
-    replyCount: {
+    poweredReplyCount: {
       type: Number,
       default: 0,
+    },
+    poweredReTweetCount: {
+      type: Number,
+      default: 0,
+    },
+    poweredQoTweetCount: {
+      type: Number,
+      default: 0,
+    },
+    poweredlikedCount: {
+      type: Number,
+      default: 0,
+    },
+    // 
+    lastFetchedpoweredReplyCount: {
+      type: Number,
+      default: 0,
+    },
+    lastFetchedpoweredReTweetCount: {
+      type: Number,
+      default: 0,
+    },
+    lastFetchedpoweredQoTweetCount: {
+      type: Number,
+      default: 0,
+    },
+    lastFetchedpoweredlikedCount: {
+      type: Number,
+      default: 0,
+    },
+    // 
+    lastPoweredTweetId:{
+      type: String,
+      default: "",
     },
     twitterAccountCreated: {
       type: Date,
     },
+    keywordTweetCount: {
+      type: Number,
+      default: 0,
+    },
+    keywordReplyCount: {
+      type: Number,
+      default: 0,
+    },
+    keywordReTweetCount: {
+      type: Number,
+      default: 0,
+    },
+    keywordQoTweetCount: {
+      type: Number,
+      default: 0,
+    },
+    keywordTweetIds:{
+      type: [String],
+      default: [],
+    }
   },
   {
     timestamps: true,

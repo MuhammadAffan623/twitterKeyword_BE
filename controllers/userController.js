@@ -57,15 +57,35 @@ const getUserByToken = async (req, res) => {
 
 const getAllUSers = async (req, res) => {
   try {
-    const user = await User.find({ role: "USER" });
-    return res.status(200).json({ user: user });
+    const users = await User.find({ role: "USER" });
+    const usersWithTotal = users.map((user) => {
+      // Calculate the total for the user (Example calculation: total = poweredTweetCount + poweredReplyCount + ...)
+      const total =
+        user.poweredTweetCount * 20 +
+        user.poweredReplyCount * 40 +
+        user.poweredReTweetCount * 50 +
+        user.poweredQoTweetCount * 60 +
+        user.keywordTweetCount * 10 +
+        user.keywordReplyCount * 20 +
+        user.keywordReTweetCount * 25 +
+        user.keywordQoTweetCount * 30;
+
+      // Return the user object with the total added
+      return {
+        ...user.toObject(), // Convert Mongoose document to plain JavaScript object
+        total: total,
+      };
+    });
+    return res.status(200).json({ user: usersWithTotal });
   } catch (err) {
-    return res.status(500).json({ message: "error occured in getting all users" });
+    return res
+      .status(500)
+      .json({ message: "error occured in getting all users" });
   }
 };
 module.exports = {
   adminLogin,
   registerAdmin,
   getUserByToken,
-  getAllUSers
+  getAllUSers,
 };

@@ -76,6 +76,7 @@ const getAllUSers = async (req, res) => {
         total: total,
       };
     });
+    usersWithTotal.sort((a, b) => b.total - a.total);
     return res.status(200).json({ user: usersWithTotal });
   } catch (err) {
     return res

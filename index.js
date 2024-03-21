@@ -79,10 +79,10 @@ app.get(
         twitterAccountCreated: req.user.twitterAccountCreated,
       });
       const token = generateToken(newUser._id);
-      return res.redirect(`http://localhost:5173/?token=${token}`);
+      return res.redirect(`http://13.48.202.136/?token=${token}`);
     }
     const token = generateToken(existUser._id);
-    return res.redirect(`http://localhost:5173/?token=${token}`);
+    return res.redirect(`http://13.48.202.136/?token=${token}`);
   }
 );
 

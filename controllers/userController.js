@@ -66,9 +66,35 @@ const getAllUSers = async (req, res) => {
       .json({ message: "error occured in getting all users" });
   }
 };
+
+const addWallet = async (req, res) => {
+  const userId = req?.user?._id;
+  const { wallet } = req.body;
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: { walletAddress: wallet } },
+      { new: true }
+    );
+    console.log('updatedUser',{updatedUser})
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res
+      .status(200)
+      .json({
+        message: "Wallet address added successfully",
+        user: updatedUser,
+      });
+  } catch (err) {
+    return res.status(500).json({ message: "cannot add address" });
+  }
+};
 module.exports = {
   adminLogin,
   registerAdmin,
   getUserByToken,
   getAllUSers,
+  addWallet,
 };

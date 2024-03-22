@@ -8,5 +8,6 @@ module.exports = {
   JWT_SECRET: process.env.JWT_SECRET,
   CALLBACK_URL : process.env.CALLBACK_URL,
   TWITTER_API_KEY : process.env.TWITTER_API_KEY,
-  TWITTER_API_SECRET_KEY: process.env.TWITTER_API_SECRET_KEY
+  TWITTER_API_SECRET_KEY: process.env.TWITTER_API_SECRET_KEY,
+  FRONTEND_URL: process.env.FRONTEND_URL
 };

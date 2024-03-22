@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const session = require("express-session");
 const app = express();
-const { PORT } = require("./config");
+const { PORT, FRONTEND_URL } = require("./config");
 const generateToken = require("./utils/tokenHelper");
 app.use(cors());
 require("./db");
@@ -79,10 +79,10 @@ app.get(
         twitterAccountCreated: req.user.twitterAccountCreated,
       });
       const token = generateToken(newUser._id);
-      return res.redirect(`http://13.48.202.136/?token=${token}`);
+      return res.redirect(`${FRONTEND_URL}/?token=${token}`);
     }
     const token = generateToken(existUser._id);
-    return res.redirect(`http://13.48.202.136/?token=${token}`);
+    return res.redirect(`${FRONTEND_URL}/?token=${token}`);
   }
 );
 

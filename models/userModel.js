@@ -52,7 +52,11 @@ const userSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
-    // 
+    poweredViewCount: {
+      type: Number,
+      default: 0,
+    },
+    //
     lastFetchedpoweredReplyCount: {
       type: Number,
       default: 0,
@@ -69,8 +73,8 @@ const userSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
-    // 
-    lastPoweredTweetId:{
+    //
+    lastPoweredTweetId: {
       type: String,
       default: "",
     },
@@ -93,10 +97,18 @@ const userSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
-    keywordTweetIds:{
+    keywordTweetIds: {
       type: [String],
       default: [],
-    }
+    },
+    walletAddress: {
+      type: String,
+      default: "",
+    },
+    totalElo: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

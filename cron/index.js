@@ -3,8 +3,8 @@ const User = require("../models/userModel");
 const KeywordModel = require("../models/keywordModel");
 
 // const cronSchedule = "*/3 * * * * *";
-// const cronSchedule = "*/15 * * * *";
-const cronSchedule = "*/45 * * * *";
+const cronSchedule = "*/17 * * * *";
+// const cronSchedule = "*/45 * * * *";
 const { fetchTweetsAndRepliesByUsername } = require("../utils/tweetshelper");
 
 async function calculateHourDifference(isoDate1) {
@@ -60,21 +60,28 @@ async function fetchAnfUpdateUSer(user, keyword, lastfetchTime) {
 const cronJob = async () => {
   try {
     const allUSer = await User.find({ role: "USER" });
-    allUSer.forEach(async (user) => {
-      if (user.fetchDateTime?.getTime() === new Date("1995-01-01").getTime()) {
-        console.log("first fetch");
-        await fetchAnfUpdateUSer(user);
-      } else {
-        console.log("first fetch else");
-        const hours = await calculateHourDifference(user?.fetchDateTime);
-        console.log("hours : ", hours);
-        if (hours >= 4) {
+    for (const user of allUSer) {
+      console.log("for user ", user?.username);
+      await (async () => {
+        if (
+          user.fetchDateTime?.getTime() === new Date("1995-01-01").getTime()
+        ) {
+          console.log("first fetch");
           await fetchAnfUpdateUSer(user);
+          // Add delay after each iteration to prevent rate limiting
+          await delay(60000 * 3); // 1 minute = 60,000 milliseconds
+        } else {
+          console.log("first fetch else");
+          const hours = await calculateHourDifference(user?.fetchDateTime);
+          console.log("hours : ", hours);
+          if (hours >= 4) {
+            await fetchAnfUpdateUSer(user);
+            // Add delay after each iteration to prevent rate limiting
+            await delay(60000 * 3); // 1 minute = 60,000 milliseconds
+          }
         }
-      }
-      // Add delay after each iteration to prevent limit out
-      await delay(60000); // 1 minute = 60,000 milliseconds
-    });
+      })();
+    }
   } catch (error) {
     console.error("Error in cron job:", error);
   }
@@ -87,5 +94,5 @@ const job = cron.schedule(cronSchedule, cronJob);
 job.start();
 // Function to simulate a delay
 function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

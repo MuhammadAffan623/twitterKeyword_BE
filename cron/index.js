@@ -43,18 +43,18 @@ async function fetchAnfUpdateUSer(user, keyword, lastfetchTime) {
     poweredQoTweetCount,
     poweredViewCount,
     totalElo:
-      poweredReplyCount +
-      poweredReTweetCount +
-      poweredlikedCount +
-      poweredQoTweetCount +
-      poweredViewCount,
+      poweredReplyCount * 10 +
+      poweredReTweetCount * 15 +
+      poweredlikedCount * 5 +
+      poweredQoTweetCount * 15 +
+      poweredViewCount * 1,
   };
   const updatedUser = await User.findByIdAndUpdate(
     user._id,
     { $set: body },
     { new: true }
   );
-  console.log('updatedUser :',updatedUser)
+  console.log("updatedUser :", updatedUser);
 }
 
 const cronJob = async () => {

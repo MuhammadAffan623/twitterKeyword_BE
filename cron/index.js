@@ -2,8 +2,9 @@ const cron = require("node-cron");
 const User = require("../models/userModel");
 const KeywordModel = require("../models/keywordModel");
 
-const cronSchedule = "*/3 * * * * *";
+// const cronSchedule = "*/3 * * * * *";
 // const cronSchedule = "*/15 * * * *";
+const cronSchedule = "*/45 * * * *";
 const { fetchTweetsAndRepliesByUsername } = require("../utils/tweetshelper");
 
 async function calculateHourDifference(isoDate1) {
@@ -55,18 +56,11 @@ async function fetchAnfUpdateUSer(user, keyword, lastfetchTime) {
   );
   console.log('updatedUser :',updatedUser)
 }
-let fetvch = true;
+
 const cronJob = async () => {
   try {
-    if (fetvch) {
-      fetvch = false;
-      const user = await User.findOne({ username: "ShamimShah84067" });
-      console.log(user);
-      await fetchAnfUpdateUSer(user);
-    }
-    return;
     const allUSer = await User.find({ role: "USER" });
-    allUSer.map(async (user, index) => {
+    allUSer.forEach(async (user) => {
       if (user.fetchDateTime?.getTime() === new Date("1995-01-01").getTime()) {
         console.log("first fetch");
         await fetchAnfUpdateUSer(user);
@@ -78,6 +72,8 @@ const cronJob = async () => {
           await fetchAnfUpdateUSer(user);
         }
       }
+      // Add delay after each iteration to prevent limit out
+      await delay(60000); // 1 minute = 60,000 milliseconds
     });
   } catch (error) {
     console.error("Error in cron job:", error);

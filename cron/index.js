@@ -85,3 +85,7 @@ const job = cron.schedule(cronSchedule, cronJob);
 
 // Start the cron job
 job.start();
+// Function to simulate a delay
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}

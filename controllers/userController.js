@@ -57,27 +57,9 @@ const getUserByToken = async (req, res) => {
 
 const getAllUSers = async (req, res) => {
   try {
-    const users = await User.find({ role: "USER" });
-    const usersWithTotal = users.map((user) => {
-      // Calculate the total for the user (Example calculation: total = poweredTweetCount + poweredReplyCount + ...)
-      const total =
-        user.poweredTweetCount * 20 +
-        user.poweredReplyCount * 40 +
-        user.poweredReTweetCount * 50 +
-        user.poweredQoTweetCount * 60 +
-        user.keywordTweetCount * 10 +
-        user.keywordReplyCount * 20 +
-        user.keywordReTweetCount * 25 +
-        user.keywordQoTweetCount * 30;
+    const users = await User.find({ role: "USER" }).sort("-totalElo").limit(10);
 
-      // Return the user object with the total added
-      return {
-        ...user.toObject(), // Convert Mongoose document to plain JavaScript object
-        total: total,
-      };
-    });
-    usersWithTotal.sort((a, b) => b.total - a.total);
-    return res.status(200).json({ user: usersWithTotal });
+    return res.status(200).json({ user: users });
   } catch (err) {
     return res
       .status(500)

@@ -3,8 +3,8 @@ const User = require("../models/userModel");
 const KeywordModel = require("../models/keywordModel");
 
 // const cronSchedule = "*/3 * * * * *";
-const cronSchedule = "*/17 * * * *";
-// const cronSchedule = "*/45 * * * *";
+// const cronSchedule = "*/17 * * * *";
+const cronSchedule = "0 */3 * * *";
 const { fetchTweetsAndRepliesByUsername } = require("../utils/tweetshelper");
 
 async function calculateHourDifference(isoDate1) {

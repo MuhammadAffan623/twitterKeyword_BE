@@ -76,25 +76,40 @@ const addWallet = async (req, res) => {
       { $set: { walletAddress: wallet } },
       { new: true }
     );
-    console.log('updatedUser',{updatedUser})
+    console.log("updatedUser", { updatedUser });
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    return res
-      .status(200)
-      .json({
-        message: "Wallet address added successfully",
-        user: updatedUser,
-      });
+    return res.status(200).json({
+      message: "Wallet address added successfully",
+      user: updatedUser,
+    });
   } catch (err) {
     return res.status(500).json({ message: "cannot add address" });
   }
 };
+
+const getUserRank = async (req, res) => {
+  try {
+    const updatedUser = await User.find();
+    const userIndex = updatedUser.findIndex(
+      (item) => item.twitterId === req?.user?.twitterId
+    );
+    return res.status(200).json({
+      rank: userIndex,
+      user: req?.user,
+    });
+  } catch (err) {
+    return res.status(500).json({ message: "cannot add address" });
+  }
+};
+
 module.exports = {
   adminLogin,
   registerAdmin,
   getUserByToken,
   getAllUSers,
   addWallet,
+  getUserRank,
 };

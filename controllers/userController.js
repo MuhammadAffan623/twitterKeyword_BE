@@ -57,9 +57,21 @@ const getUserByToken = async (req, res) => {
 
 const getAllUSers = async (req, res) => {
   try {
-    const users = await User.find({ role: "USER" }).sort("-totalElo").limit(10);
-
-    return res.status(200).json({ user: users });
+    const users = await User.find({ role: "USER" });
+    const userWithTotal = users.map((user) => {
+      const totalELO = user?.totalElo || 0;
+      const totalLASTELO = user?.lastTotalElo || 0;
+      return {
+        ...user.toObject(),
+        toTal: totalELO + totalLASTELO,
+      };
+    });
+    userWithTotal.sort((a, b) => b.toTal - a.toTal);
+    if (userWithTotal?.length <= 10) {
+      return res.status(200).json({ user: userWithTotal });
+    }
+    const first10Users = userWithTotal.slice(0, 10);
+    return res.status(200).json({ users: first10Users });
   } catch (err) {
     return res
       .status(500)

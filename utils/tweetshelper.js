@@ -78,10 +78,13 @@ async function fetchTweetsAndRepliesByUsername(username) {
   });
 
   const tweetss = tweetsResponse?.data || [];
-  console.log('tweetss :' , tweetss)
+  console.log("tweetss :", tweetss?.length);
   const dolSem = tweetss?.filter(
-    (item) => item.text.includes("$SEM") || item.text.includes("@SemAtlman")
+    (item) =>
+      item?.text?.toLowerCase()?.includes("$sem") ||
+      item?.text?.toLowerCase()?.includes("@sematlman")
   );
+  console.log('dolSem : ' , dolSem?.length)
 
   // poweredTweetCount only increment this if exist
   let poweredReplyCount = 0;

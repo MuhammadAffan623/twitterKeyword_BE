@@ -71,7 +71,7 @@ const getAllUSers = async (req, res) => {
       return res.status(200).json({ user: userWithTotal });
     }
     const first10Users = userWithTotal.slice(0, 10);
-    return res.status(200).json({ users: first10Users });
+    return res.status(200).json({ user: first10Users });
   } catch (err) {
     return res
       .status(500)

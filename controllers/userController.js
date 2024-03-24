@@ -104,7 +104,7 @@ const addWallet = async (req, res) => {
 
 const getUserRank = async (req, res) => {
   try {
-    const updatedUser = await User.find();
+    const updatedUser = await User.find().sort('-totalElo');
     const userIndex = updatedUser.findIndex(
       (item) => item.twitterId === req?.user?.twitterId
     );

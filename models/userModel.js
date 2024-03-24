@@ -56,56 +56,39 @@ const userSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
-    //
-    lastFetchedpoweredReplyCount: {
-      type: Number,
-      default: 0,
-    },
-    lastFetchedpoweredReTweetCount: {
-      type: Number,
-      default: 0,
-    },
-    lastFetchedpoweredQoTweetCount: {
-      type: Number,
-      default: 0,
-    },
-    lastFetchedpoweredlikedCount: {
-      type: Number,
-      default: 0,
-    },
-    //
-    lastPoweredTweetId: {
-      type: String,
-      default: "",
-    },
     twitterAccountCreated: {
       type: Date,
     },
-    keywordTweetCount: {
+    lastPoweredViewCount: {
+      type: String,
+      default: "",
+    },
+    lastPoweredReplyCount: {
       type: Number,
       default: 0,
     },
-    keywordReplyCount: {
+    lastPoweredReTweetCount: {
       type: Number,
       default: 0,
     },
-    keywordReTweetCount: {
+    lastPoweredlikedCount: {
       type: Number,
       default: 0,
     },
-    keywordQoTweetCount: {
+    lastPoweredQoTweetCount: {
       type: Number,
       default: 0,
     },
-    keywordTweetIds: {
-      type: [String],
-      default: [],
-    },
+
     walletAddress: {
       type: String,
       default: "",
     },
     totalElo: {
+      type: Number,
+      default: 0,
+    },
+    lastTotalElo: {
       type: Number,
       default: 0,
     },

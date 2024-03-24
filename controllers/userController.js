@@ -104,7 +104,53 @@ const getUserRank = async (req, res) => {
     return res.status(500).json({ message: "cannot add address" });
   }
 };
+const updateValues = async (req, res) => {
+  if (req.user.role !== "ADMIN") {
+    return res.status(500).json({ message: "only admin can access this" });
+  }
 
+  const session = await User.startSession();
+  session.startTransaction();
+  try {
+    const allUsers = await User.find({
+      role: "USER",
+      walletAddress: { $exists: true, $ne: "" },
+    });
+    const allUsersCopy = JSON.parse(JSON.stringify(allUsers));
+    for (const user of allUsers) {
+      user.lastTotalElo += user.totalElo;
+      user.totalElo = 0;
+
+      user.lastPoweredViewCount += user.poweredViewCount;
+      user.poweredViewCount = 0;
+
+      user.lastPoweredReplyCount += user.poweredReplyCount;
+      user.poweredReplyCount = 0;
+
+      user.lastPoweredReTweetCount += user.poweredReTweetCount;
+      user.poweredReTweetCount = 0;
+
+      user.lastPoweredlikedCount += user.poweredlikedCount;
+      user.poweredlikedCount = 0;
+
+      user.lastPoweredQoTweetCount += user.poweredQoTweetCount;
+      user.poweredQoTweetCount = 0;
+      await user.save();
+    }
+    await session.commitTransaction();
+    session.endSession();
+
+    const updatedUsers = allUsersCopy.map((item) => ({
+      totalElo: item.totalElo,
+      walletAddress: item.walletAddress,
+    }));
+    return res.status(200).json({ allUSERS: updatedUsers });
+  } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+    return res.status(500).json({ message: "Cannot update user values" });
+  }
+};
 module.exports = {
   adminLogin,
   registerAdmin,
@@ -112,4 +158,5 @@ module.exports = {
   getAllUSers,
   addWallet,
   getUserRank,
+  updateValues,
 };

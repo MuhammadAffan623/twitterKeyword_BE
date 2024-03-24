@@ -7,6 +7,7 @@ const {
   getAllUSers,
   addWallet,
   getUserRank,
+  updateValues
 } = require("../controllers/userController");
 const { isAuthenticated } = require("../middleware/authMiddleware");
 
@@ -16,5 +17,6 @@ router.get("/", isAuthenticated, getUserByToken);
 router.get("/all", getAllUSers);
 router.post("/addWallet", isAuthenticated, addWallet);
 router.get("/userRank", isAuthenticated, getUserRank);
+router.get("/updateValues", isAuthenticated, updateValues);
 
 module.exports = router;

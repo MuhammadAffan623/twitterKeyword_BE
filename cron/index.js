@@ -35,20 +35,46 @@ async function fetchAnfUpdateUSer(user, keyword, lastfetchTime) {
     poweredViewCount,
   } = await fetchTweetsAndRepliesByUsername(user);
 
+  const currTotalEllo =
+    poweredReplyCount * 10 +
+    poweredReTweetCount * 15 +
+    poweredlikedCount * 5 +
+    poweredQoTweetCount * 15 +
+    poweredViewCount * 1;
+  const ctotalElo = getDifference(currTotalEllo, user.lastTotalElo);
+  const cpoweredReplyCount = getDifference(
+    poweredReplyCount - user.lastPoweredReplyCount
+  );
+  //
+  const cpoweredReTweetCount = getDifference(
+    poweredReTweetCount,
+    user.lastPoweredReTweetCount
+  );
+  const cpoweredlikedCount = getDifference(
+    poweredlikedCount,
+    user.lastPoweredlikedCount
+  );
+  const cpoweredQoTweetCount = getDifference(
+    poweredQoTweetCount,
+    user.lastPoweredQoTweetCount
+  );
+  const cpoweredViewCount = getDifference(
+    poweredViewCount,
+    user.lastPoweredViewCount
+  );
+  //
   const body = {
     fetchDateTime: new Date(),
-    poweredReplyCount,
-    poweredReTweetCount,
-    poweredlikedCount,
-    poweredQoTweetCount,
-    poweredViewCount,
-    totalElo:
-      poweredReplyCount * 10 +
-      poweredReTweetCount * 15 +
-      poweredlikedCount * 5 +
-      poweredQoTweetCount * 15 +
-      poweredViewCount * 1,
+    poweredReplyCount: cpoweredReplyCount,
+    poweredReTweetCount: cpoweredReTweetCount,
+    poweredlikedCount: cpoweredlikedCount,
+    poweredQoTweetCount: cpoweredQoTweetCount,
+    poweredViewCount: cpoweredViewCount,
+    totalElo: ctotalElo,
   };
+
+  console.log("bbb");
+  console.log(body);
   const updatedUser = await User.findByIdAndUpdate(
     user._id,
     { $set: body },
@@ -56,11 +82,13 @@ async function fetchAnfUpdateUSer(user, keyword, lastfetchTime) {
   );
   console.log("updatedUser :", updatedUser);
 }
-
+let fetch = true;
 const cronJob = async () => {
   try {
     const allUSer = await User.find({ role: "USER" });
     for (const user of allUSer) {
+      if(!fetch) return
+      fetch = false
       console.log("for user ", user?.username);
       await (async () => {
         if (

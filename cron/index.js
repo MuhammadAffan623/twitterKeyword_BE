@@ -82,13 +82,11 @@ async function fetchAnfUpdateUSer(user, keyword, lastfetchTime) {
   );
   console.log("updatedUser :", updatedUser);
 }
-let fetch = true;
+
 const cronJob = async () => {
   try {
     const allUSer = await User.find({ role: "USER" });
     for (const user of allUSer) {
-      if(!fetch) return
-      fetch = false
       console.log("for user ", user?.username);
       await (async () => {
         if (

@@ -41,24 +41,25 @@ async function fetchAnfUpdateUSer(user, keyword, lastfetchTime) {
     poweredlikedCount * 5 +
     poweredQoTweetCount * 15 +
     poweredViewCount * 1;
-  const ctotalElo = getDifference(currTotalEllo, user.lastTotalElo);
-  const cpoweredReplyCount = getDifference(
-    poweredReplyCount - user.lastPoweredReplyCount
+  const ctotalElo = await getDifference(currTotalEllo, user.lastTotalElo);
+  const cpoweredReplyCount = await getDifference(
+    poweredReplyCount,
+    user.lastPoweredReplyCount
   );
   //
-  const cpoweredReTweetCount = getDifference(
+  const cpoweredReTweetCount = await getDifference(
     poweredReTweetCount,
     user.lastPoweredReTweetCount
   );
-  const cpoweredlikedCount = getDifference(
+  const cpoweredlikedCount = await getDifference(
     poweredlikedCount,
     user.lastPoweredlikedCount
   );
-  const cpoweredQoTweetCount = getDifference(
+  const cpoweredQoTweetCount = await getDifference(
     poweredQoTweetCount,
     user.lastPoweredQoTweetCount
   );
-  const cpoweredViewCount = getDifference(
+  const cpoweredViewCount = await getDifference(
     poweredViewCount,
     user.lastPoweredViewCount
   );

@@ -2,9 +2,9 @@ const cron = require("node-cron");
 const User = require("../models/userModel");
 const KeywordModel = require("../models/keywordModel");
 
-// const cronSchedule = "*/3 * * * * *";
+const cronSchedule = "*/3 * * * * *";
 // const cronSchedule = "*/17 * * * *";
-const cronSchedule = "0 */3 * * *";
+// const cronSchedule = "0 */3 * * *";
 const { fetchTweetsAndRepliesByUsername } = require("../utils/tweetshelper");
 
 async function calculateHourDifference(isoDate1) {
@@ -23,17 +23,19 @@ function getDateOneMonthEarlier() {
   currentDate.setMonth(currentDate.getMonth() - 1);
   return currentDate;
 }
+
 async function getDifference(number1, number2) {
   return Math.abs(number1 - number2);
 }
-async function fetchAnfUpdateUSer(user, keyword, lastfetchTime) {
+async function fetchAnfUpdateUSer(user, lastfetchTime) {
   const {
     poweredReplyCount,
     poweredReTweetCount,
     poweredlikedCount,
     poweredQoTweetCount,
     poweredViewCount,
-  } = await fetchTweetsAndRepliesByUsername(user);
+    allTweetIds,
+  } = await fetchTweetsAndRepliesByUsername(user, lastfetchTime);
 
   const currTotalEllo =
     poweredReplyCount * 10 +
@@ -49,19 +51,19 @@ async function fetchAnfUpdateUSer(user, keyword, lastfetchTime) {
   //
   const cpoweredReTweetCount = await getDifference(
     poweredReTweetCount,
-    user.lastPoweredReTweetCount
+    +user.lastPoweredReTweetCount
   );
   const cpoweredlikedCount = await getDifference(
     poweredlikedCount,
-    user.lastPoweredlikedCount
+    +user.lastPoweredlikedCount
   );
   const cpoweredQoTweetCount = await getDifference(
     poweredQoTweetCount,
-    user.lastPoweredQoTweetCount
+    +user.lastPoweredQoTweetCount
   );
   const cpoweredViewCount = await getDifference(
     poweredViewCount,
-    user.lastPoweredViewCount
+    +user.lastPoweredViewCount
   );
   //
   const body = {
@@ -72,6 +74,7 @@ async function fetchAnfUpdateUSer(user, keyword, lastfetchTime) {
     poweredQoTweetCount: cpoweredQoTweetCount,
     poweredViewCount: cpoweredViewCount,
     totalElo: ctotalElo,
+    postIds: allTweetIds,
   };
 
   console.log("bbb");
@@ -83,32 +86,42 @@ async function fetchAnfUpdateUSer(user, keyword, lastfetchTime) {
   );
   console.log("updatedUser :", updatedUser);
 }
-
+let fetch = true;
 const cronJob = async () => {
   try {
-    const allUSer = await User.find({ role: "USER" });
-    for (const user of allUSer) {
-      console.log("for user ", user?.username);
-      await (async () => {
-        if (
-          user.fetchDateTime?.getTime() === new Date("1995-01-01").getTime()
-        ) {
-          console.log("first fetch");
-          await fetchAnfUpdateUSer(user);
-          // Add delay after each iteration to prevent rate limiting
-          await delay(60000 * 3); // 1 minute = 60,000 milliseconds
-        } else {
-          console.log("first fetch else");
-          const hours = await calculateHourDifference(user?.fetchDateTime);
-          console.log("hours : ", hours);
-          if (hours >= 4) {
-            await fetchAnfUpdateUSer(user);
-            // Add delay after each iteration to prevent rate limiting
-            await delay(60000 * 3); // 1 minute = 60,000 milliseconds
-          }
-        }
-      })();
+    if (fetch) {
+      fetch = false;
+      const user = await User.find({ username: "ShamimShah84067" });
+      const shah = user?.[0];
+      fetchAnfUpdateUSer(shah, shah?.fetchDateTime);
+      // fetchAnfUpdateUSer(shah,user?.fetchDateTime)for second time
+      console.log(" user >>> ", shah);
+
     }
+    return
+    // const allUSer = await User.find({ role: "USER" });
+    // for (const user of allUSer) {
+    //   console.log("for user ", user?.username);
+    //   await (async () => {
+    //     if (
+    //       user.fetchDateTime?.getTime() === new Date("1995-01-01").getTime()
+    //     ) {
+    //       console.log("first fetch");
+    //       await fetchAnfUpdateUSer(user, user?.createdAt);
+    //       // Add delay after each iteration to prevent rate limiting
+    //       await delay(60000 * 3); // 1 minute = 60,000 milliseconds
+    //     } else {
+    //       console.log("first fetch else");
+    //       const hours = await calculateHourDifference(user?.fetchDateTime);
+    //       console.log("hours : ", hours);
+    //       if (hours >= 4) {
+    //         await fetchAnfUpdateUSer(user, user?.fetchDateTime);
+    //         // Add delay after each iteration to prevent rate limiting
+    //         await delay(60000 * 3); // 1 minute = 60,000 milliseconds
+    //       }
+    //     }
+    //   })();
+    // }
   } catch (error) {
     console.error("Error in cron job:", error);
   }

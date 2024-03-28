@@ -86,42 +86,38 @@ async function fetchAnfUpdateUSer(user, lastfetchTime) {
   );
   console.log("updatedUser :", updatedUser);
 }
-let fetch = true;
+// let fetch = true;
 const cronJob = async () => {
   try {
-    if (fetch) {
-      fetch = false;
-      const user = await User.find({ username: "ShamimShah84067" });
-      const shah = user?.[0];
-      fetchAnfUpdateUSer(shah, shah?.fetchDateTime);
-      // fetchAnfUpdateUSer(shah,user?.fetchDateTime)for second time
-      console.log(" user >>> ", shah);
-
+    // if(!fetch)return
+    // fetch = false
+    // console.log("cronJob");
+    // const result = await User.updateMany({}, { fetchDateTime: new Date("1995-01-01") });
+    // console.log(result);
+    // return;
+    const allUSer = await User.find({ role: "USER" });
+    for (const user of allUSer) {
+      console.log("for user ", user?.username);
+      await (async () => {
+        if (
+          user.fetchDateTime?.getTime() === new Date("1995-01-01").getTime()
+        ) {
+          console.log("first fetch");
+          await fetchAnfUpdateUSer(user, user?.createdAt);
+          // Add delay after each iteration to prevent rate limiting
+          await delay(60000 * 3); // 1 minute = 60,000 milliseconds
+        } else {
+          console.log("first fetch else");
+          const hours = await calculateHourDifference(user?.fetchDateTime);
+          console.log("hours : ", hours);
+          if (hours >= 4) {
+            await fetchAnfUpdateUSer(user, user?.fetchDateTime);
+            // Add delay after each iteration to prevent rate limiting
+            await delay(60000 * 3); // 1 minute = 60,000 milliseconds
+          }
+        }
+      })();
     }
-    return
-    // const allUSer = await User.find({ role: "USER" });
-    // for (const user of allUSer) {
-    //   console.log("for user ", user?.username);
-    //   await (async () => {
-    //     if (
-    //       user.fetchDateTime?.getTime() === new Date("1995-01-01").getTime()
-    //     ) {
-    //       console.log("first fetch");
-    //       await fetchAnfUpdateUSer(user, user?.createdAt);
-    //       // Add delay after each iteration to prevent rate limiting
-    //       await delay(60000 * 3); // 1 minute = 60,000 milliseconds
-    //     } else {
-    //       console.log("first fetch else");
-    //       const hours = await calculateHourDifference(user?.fetchDateTime);
-    //       console.log("hours : ", hours);
-    //       if (hours >= 4) {
-    //         await fetchAnfUpdateUSer(user, user?.fetchDateTime);
-    //         // Add delay after each iteration to prevent rate limiting
-    //         await delay(60000 * 3); // 1 minute = 60,000 milliseconds
-    //       }
-    //     }
-    //   })();
-    // }
   } catch (error) {
     console.error("Error in cron job:", error);
   }

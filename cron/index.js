@@ -35,6 +35,7 @@ async function fetchAnfUpdateUSer(user, lastfetchTime) {
     poweredQoTweetCount,
     poweredViewCount,
     allTweetIds,
+    fetchSuccess
   } = await fetchTweetsAndRepliesByUsername(user, lastfetchTime);
 
   const currTotalEllo =
@@ -44,6 +45,19 @@ async function fetchAnfUpdateUSer(user, lastfetchTime) {
     poweredQoTweetCount * 15 +
     poweredViewCount * 1;
   const ctotalElo = await getDifference(currTotalEllo, user.lastTotalElo);
+  console.log('last resposne')
+  console.log({
+    poweredReplyCount,
+    poweredReTweetCount,
+    poweredlikedCount,
+    poweredQoTweetCount,
+    poweredViewCount,
+    allTweetIds,
+    fetchSuccess
+  })
+  console.log('ctotalElo :',ctotalElo)
+  console.log('user.totalElo :',user.totalElo)
+  if (fetchSuccess && ctotalElo && ctotalElo > user.totalElo) {
   const cpoweredReplyCount = await getDifference(
     poweredReplyCount,
     user.lastPoweredReplyCount
@@ -66,25 +80,25 @@ async function fetchAnfUpdateUSer(user, lastfetchTime) {
     +user.lastPoweredViewCount
   );
   //
-  const body = {
-    fetchDateTime: new Date(),
-    poweredReplyCount: cpoweredReplyCount,
-    poweredReTweetCount: cpoweredReTweetCount,
-    poweredlikedCount: cpoweredlikedCount,
-    poweredQoTweetCount: cpoweredQoTweetCount,
-    poweredViewCount: cpoweredViewCount,
-    totalElo: ctotalElo,
-    postIds: allTweetIds,
-  };
+ 
+    const body = {
+      fetchDateTime: new Date(),
+      poweredReplyCount: cpoweredReplyCount,
+      poweredReTweetCount: cpoweredReTweetCount,
+      poweredlikedCount: cpoweredlikedCount,
+      poweredQoTweetCount: cpoweredQoTweetCount,
+      poweredViewCount: cpoweredViewCount,
+      totalElo: ctotalElo,
+      postIds: allTweetIds,
+    };
 
-  console.log("bbb");
-  console.log(body);
-  const updatedUser = await User.findByIdAndUpdate(
-    user._id,
-    { $set: body },
-    { new: true }
-  );
-  console.log("updatedUser :", updatedUser);
+    const updatedUser = await User.findByIdAndUpdate(
+      user._id,
+      { $set: body },
+      { new: true }
+    );
+    console.log("updatedUser :", updatedUser);
+  }
 }
 // let fetch = true;
 const cronJob = async () => {
